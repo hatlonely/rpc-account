@@ -1,0 +1,18 @@
+{
+  "decoder": {
+    "name": "json"
+  },
+  "provider": {
+    "type": "Local",
+    "file": "config/account.json"
+  },
+  "Cipher": {
+    "type": "Group",
+    "ciphers": [{
+      "type": "AES",
+      "key": "IrjXy4vx7iwgCLaUeu5TVUA9TkgMwSw3QWcgE/IW5W0="
+    }, {
+      "type": "Base64"
+    }]
+  }
+}
