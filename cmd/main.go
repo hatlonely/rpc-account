@@ -6,8 +6,10 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"github.com/gorilla/handlers"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/hatlonely/go-kit/bind"
 	"github.com/hatlonely/go-kit/cli"
@@ -28,11 +30,13 @@ type Options struct {
 	flag.Options
 
 	Http struct {
-		Port int
+		Port int `dft:"80"`
 	}
 	Grpc struct {
-		Port int
+		Port int `dft:"6080"`
 	}
+
+	ExitTimeout time.Duration `dft:"10s"`
 
 	Redis   cli.RedisOptions
 	Mysql   cli.MySQLOptions
@@ -87,26 +91,42 @@ func main() {
 	svc, err := service.NewAccountServiceWithOptions(mysqlCli, redisCli, emailCli, &options.Service)
 	Must(err)
 
-	rpcServer := grpc.NewServer(rpcx.GRPCUnaryInterceptor(grpcLog, rpcx.WithDefaultValidator()))
-	api.RegisterAccountServiceServer(rpcServer, svc)
+	grpcServer := grpc.NewServer(rpcx.GRPCUnaryInterceptor(grpcLog, rpcx.WithDefaultValidator()))
+	api.RegisterAccountServiceServer(grpcServer, svc)
 
 	go func() {
 		address, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%v", options.Grpc.Port))
 		Must(err)
-		Must(rpcServer.Serve(address))
+		Must(grpcServer.Serve(address))
 	}()
 
-	muxServer := runtime.NewServeMux(
+	mux := runtime.NewServeMux(
 		rpcx.MuxWithMetadata(),
 		rpcx.MuxWithIncomingHeaderMatcher(),
 		rpcx.MuxWithOutgoingHeaderMatcher(),
 		rpcx.MuxWithProtoErrorHandler(),
 	)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	Must(api.RegisterAccountServiceHandlerFromEndpoint(
-		ctx, muxServer, fmt.Sprintf("0.0.0.0:%v", options.Grpc.Port), []grpc.DialOption{grpc.WithInsecure()},
+		context.Background(), mux, fmt.Sprintf("0.0.0.0:%v", options.Grpc.Port), []grpc.DialOption{grpc.WithInsecure()},
 	))
 	infoLog.Info(options)
-	Must(http.ListenAndServe(fmt.Sprintf(":%v", options.Http.Port), handlers.CombinedLoggingHandler(os.Stdout, muxServer)))
+
+	httpServer := http.Server{Addr: fmt.Sprintf(":%v", options.Http.Port), Handler: mux}
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			infoLog.Warnf("httpServer.ListenAndServe, err: [%v]", err)
+		}
+	}()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	<-stop
+	infoLog.Info("receive exit signal")
+	ctx, cancel := context.WithTimeout(context.Background(), options.ExitTimeout)
+	defer cancel()
+	if err := httpServer.Shutdown(ctx); err != nil {
+		infoLog.Warnf("httServer.Shutdown failed, err: [%v]", err)
+	}
+	grpcServer.Stop()
+	infoLog.Info("server exit properly")
 }
