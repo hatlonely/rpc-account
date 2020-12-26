@@ -20,8 +20,8 @@ import (
 	"github.com/hatlonely/go-kit/rpcx"
 	"google.golang.org/grpc"
 
-	"github.com/hatlonely/go-rpc/rpc-account/api/gen/go/api"
-	"github.com/hatlonely/go-rpc/rpc-account/internal/service"
+	"github.com/hatlonely/rpc-account/api/gen/go/api"
+	"github.com/hatlonely/rpc-account/internal/service"
 )
 
 var Version string

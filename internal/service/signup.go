@@ -12,11 +12,11 @@ import (
 	"github.com/spf13/cast"
 	"google.golang.org/grpc/codes"
 
-	account "github.com/hatlonely/go-rpc/rpc-account/api/gen/go/api"
-	"github.com/hatlonely/go-rpc/rpc-account/internal/storage"
+	"github.com/hatlonely/rpc-account/api/gen/go/api"
+	"github.com/hatlonely/rpc-account/internal/storage"
 )
 
-func (s *AccountService) SignUp(ctx context.Context, req *account.SignUpReq) (*empty.Empty, error) {
+func (s *AccountService) SignUp(ctx context.Context, req *api.SignUpReq) (*empty.Empty, error) {
 	key := "captcha_" + req.Email
 	val, err := s.redisCli.Get(key).Result()
 	if err == redis.Nil {

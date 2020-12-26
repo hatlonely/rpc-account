@@ -11,15 +11,15 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"google.golang.org/grpc/codes"
 
-	account "github.com/hatlonely/go-rpc/rpc-account/api/gen/go/api"
-	"github.com/hatlonely/go-rpc/rpc-account/internal/storage"
+	"github.com/hatlonely/rpc-account/api/gen/go/api"
+	"github.com/hatlonely/rpc-account/internal/storage"
 )
 
 func GenerateToken() string {
 	return hex.EncodeToString(uuid.NewV4().Bytes())
 }
 
-func (s *AccountService) SignIn(ctx context.Context, req *account.SignInReq) (*account.SignInRes, error) {
+func (s *AccountService) SignIn(ctx context.Context, req *api.SignInReq) (*api.SignInRes, error) {
 	a := &storage.Account{}
 	if strx.RePhone.MatchString(req.Username) {
 		if err := s.mysqlCli.Where("phone=?", req.Username).First(a).Error; err != nil {
@@ -49,7 +49,7 @@ func (s *AccountService) SignIn(ctx context.Context, req *account.SignInReq) (*a
 		return nil, errors.Wrapf(err, "redis set token [%v] failed", token)
 	}
 
-	return &account.SignInRes{
+	return &api.SignInRes{
 		Token: token,
 	}, nil
 }

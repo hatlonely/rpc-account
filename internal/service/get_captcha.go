@@ -11,7 +11,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/pkg/errors"
 
-	account "github.com/hatlonely/go-rpc/rpc-account/api/gen/go/api"
+	"github.com/hatlonely/rpc-account/api/gen/go/api"
 )
 
 func GenerateCaptcha() string {
@@ -20,7 +20,7 @@ func GenerateCaptcha() string {
 	return fmt.Sprintf("%06d", binary.LittleEndian.Uint64(buf)%1000000)
 }
 
-func (s *AccountService) GetCaptcha(ctx context.Context, req *account.GetCaptchaReq) (*empty.Empty, error) {
+func (s *AccountService) GetCaptcha(ctx context.Context, req *api.GetCaptchaReq) (*empty.Empty, error) {
 	var captcha string
 	key := "captcha_" + req.Email
 	if val, err := s.redisCli.Get(key).Result(); err == redis.Nil {

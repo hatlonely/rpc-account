@@ -7,7 +7,7 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	account "github.com/hatlonely/go-rpc/rpc-account/api/gen/go/api"
+	account "github.com/hatlonely/rpc-account/api/gen/go/api"
 )
 
 func TestGenerateToken(t *testing.T) {

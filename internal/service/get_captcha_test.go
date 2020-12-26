@@ -6,12 +6,12 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	account "github.com/hatlonely/go-rpc/rpc-account/api/gen/go/api"
+	"github.com/hatlonely/rpc-account/api/gen/go/api"
 )
 
 func TestAccountService_GetCaptcha(t *testing.T) {
 	Convey("TestAccountService_GetCaptcha", t, func() {
-		_, err := service.GetCaptcha(context.Background(), &account.GetCaptchaReq{
+		_, err := service.GetCaptcha(context.Background(), &api.GetCaptchaReq{
 			Email: "hatlonely@foxmail.com",
 			Name:  "hatlonely",
 		})

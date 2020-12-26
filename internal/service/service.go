@@ -9,7 +9,7 @@ import (
 	"github.com/hatlonely/go-kit/kv"
 	"github.com/jinzhu/gorm"
 
-	"github.com/hatlonely/go-rpc/rpc-account/internal/storage"
+	"github.com/hatlonely/rpc-account/internal/storage"
 )
 
 type AccountService struct {
