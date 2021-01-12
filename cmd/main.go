@@ -91,7 +91,9 @@ func main() {
 	svc, err := service.NewAccountServiceWithOptions(mysqlCli, redisCli, emailCli, &options.Service)
 	Must(err)
 
-	grpcServer := grpc.NewServer(rpcx.GRPCUnaryInterceptor(grpcLog, rpcx.WithDefaultValidator()))
+	grpcServer := grpc.NewServer(
+		rpcx.GRPCUnaryInterceptor(grpcLog, rpcx.WithGRPCUnaryInterceptorDefaultValidator()),
+	)
 	api.RegisterAccountServiceServer(grpcServer, svc)
 
 	go func() {
