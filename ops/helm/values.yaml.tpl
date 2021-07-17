@@ -58,7 +58,7 @@ config:
           "flatMap": true,
           "writers": [{
             "type": "RotateFile",
-            "rotateFileWriter": {
+            "options": {
               "filename": "log/${NAME}.rpc",
               "maxAge": "24h",
               "formatter": {
@@ -67,7 +67,7 @@ config:
             }
           }, {
             "type": "ElasticSearch",
-            "elasticSearchWriter": {
+            "options": {
               "index": "grpc",
               "idField": "requestID",
               "timeout": "200ms",
@@ -83,7 +83,7 @@ config:
           "level": "Info",
           "writers": [{
             "type": "RotateFile",
-            "rotateFileWriter": {
+            "options": {
               "filename": "log/${NAME}.rpc",
               "maxAge": "24h",
               "formatter": {
