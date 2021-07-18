@@ -7,12 +7,15 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/hatlonely/go-kit/cli"
 	"github.com/hatlonely/go-kit/kv"
+	"github.com/hatlonely/rpc-account/api/gen/go/api"
 	"github.com/jinzhu/gorm"
 
 	"github.com/hatlonely/rpc-account/internal/storage"
 )
 
 type AccountService struct {
+	api.UnsafeAccountServiceServer
+
 	mysqlCli *gorm.DB
 	redisCli *redis.Client
 	emailCli *cli.EmailCli

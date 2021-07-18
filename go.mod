@@ -7,13 +7,14 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.1
-	github.com/grpc-ecosystem/grpc-gateway v1.15.2
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.3.0
 	github.com/hatlonely/go-kit v1.0.20
 	github.com/jinzhu/gorm v1.9.16
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/smartystreets/goconvey v1.6.4
 	github.com/spf13/cast v1.3.1
-	google.golang.org/genproto v0.0.0-20210224155714-063164c882e6
+	google.golang.org/genproto v0.0.0-20210312152112-fc591d9ea70f
 	google.golang.org/grpc v1.36.0
+	google.golang.org/protobuf v1.26.0
 )
