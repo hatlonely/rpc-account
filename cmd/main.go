@@ -14,6 +14,7 @@ import (
 	"github.com/hatlonely/go-kit/logger"
 	"github.com/hatlonely/go-kit/refx"
 	"github.com/hatlonely/go-kit/rpcx"
+	"github.com/hatlonely/go-kit/wrap"
 	"github.com/hatlonely/rpc-account/api/gen/go/api"
 	"github.com/hatlonely/rpc-account/internal/service"
 )
@@ -33,8 +34,8 @@ type Options struct {
 	ExitTimeout time.Duration `dft:"10s"`
 
 	GrpcGateway rpcx.GrpcGatewayOptions
-	Redis       cli.RedisOptions
-	Mysql       cli.MySQLOptions
+	Redis       wrap.RedisClientWrapperOptions
+	Mysql       wrap.GORMDBWrapperOptions
 	Email       cli.EmailOptions
 	Service     service.Options
 
@@ -80,9 +81,9 @@ func main() {
 	infoLog.With("options", options).Info("init config success")
 	cfg.SetLogger(infoLog)
 
-	redisCli, err := cli.NewRedisWithOptions(&options.Redis)
+	redisCli, err := wrap.NewRedisClientWrapperWithOptions(&options.Redis)
 	Must(err)
-	mysqlCli, err := cli.NewMysqlWithOptions(&options.Mysql)
+	mysqlCli, err := wrap.NewGORMDBWrapperWithOptions(&options.Mysql)
 	Must(err)
 	emailCli := cli.NewEmailWithOptions(&options.Email)
 

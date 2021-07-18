@@ -18,7 +18,7 @@ import (
 
 func (s *AccountService) SignUp(ctx context.Context, req *api.SignUpReq) (*empty.Empty, error) {
 	key := "captcha_" + req.Email
-	val, err := s.redisCli.Get(key).Result()
+	val, err := s.redisCli.Get(ctx, key).Result()
 	if err == redis.Nil {
 		return nil, rpcx.NewErrorf(errors.New("captcha is not exists"), codes.InvalidArgument, "InvalidArgument", "captcha is not exists")
 	}
@@ -43,7 +43,7 @@ func (s *AccountService) SignUp(ctx context.Context, req *api.SignUpReq) (*empty
 		Gender:   int(req.Gender),
 		Avatar:   req.Avatar,
 	}
-	if err := s.mysqlCli.Create(user).Error; err != nil {
+	if err := s.mysqlCli.Create(ctx, user).Unwrap().Error; err != nil {
 		switch err.(type) {
 		case *mysql.MySQLError:
 			e := err.(*mysql.MySQLError)

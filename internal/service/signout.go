@@ -10,7 +10,7 @@ import (
 )
 
 func (s *AccountService) SignOut(ctx context.Context, req *api.SignOutReq) (*empty.Empty, error) {
-	if err := s.kv.Del(req.Token); err != nil {
+	if err := s.kv.Del(ctx, req.Token); err != nil {
 		return nil, errors.Wrapf(err, "kv del [%v] failed", req.Token)
 	}
 
