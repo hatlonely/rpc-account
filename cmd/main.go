@@ -1,16 +1,12 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"net"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/hatlonely/go-kit/bind"
 	"github.com/hatlonely/go-kit/cli"
 	"github.com/hatlonely/go-kit/config"
@@ -18,8 +14,6 @@ import (
 	"github.com/hatlonely/go-kit/logger"
 	"github.com/hatlonely/go-kit/refx"
 	"github.com/hatlonely/go-kit/rpcx"
-	"google.golang.org/grpc"
-
 	"github.com/hatlonely/rpc-account/api/gen/go/api"
 	"github.com/hatlonely/rpc-account/internal/service"
 )
@@ -38,10 +32,11 @@ type Options struct {
 
 	ExitTimeout time.Duration `dft:"10s"`
 
-	Redis   cli.RedisOptions
-	Mysql   cli.MySQLOptions
-	Email   cli.EmailOptions
-	Service service.Options
+	GrpcGateway rpcx.GrpcGatewayOptions
+	Redis       cli.RedisOptions
+	Mysql       cli.MySQLOptions
+	Email       cli.EmailOptions
+	Service     service.Options
 
 	Logger struct {
 		Info logger.Options
@@ -57,8 +52,8 @@ func Must(err error) {
 
 func main() {
 	var options Options
-	Must(flag.Struct(&options, refx.WithCamelName()))
-	Must(flag.Parse(flag.WithJsonVal()))
+	refx.Must(flag.Struct(&options))
+	refx.Must(flag.Parse(flag.WithJsonVal()))
 	if options.Help {
 		fmt.Println(flag.Usage())
 		return
@@ -72,15 +67,18 @@ func main() {
 		options.ConfigPath = "config/app.json"
 	}
 	cfg, err := config.NewConfigWithSimpleFile(options.ConfigPath)
-	Must(err)
-	Must(bind.Bind(&options, []bind.Getter{
-		flag.Instance(), bind.NewEnvGetter(bind.WithEnvPrefix("ACCOUNT")), cfg,
-	}, refx.WithCamelName()))
+	refx.Must(err)
+	refx.Must(cfg.Watch())
+	defer cfg.Stop()
+
+	refx.Must(bind.Bind(&options, []bind.Getter{flag.Instance(), bind.NewEnvGetter(bind.WithEnvPrefix("IMM_OPENAPI")), cfg}))
 
 	grpcLog, err := logger.NewLoggerWithOptions(&options.Logger.Grpc)
-	Must(err)
+	refx.Must(err)
 	infoLog, err := logger.NewLoggerWithOptions(&options.Logger.Info)
-	Must(err)
+	refx.Must(err)
+	infoLog.With("options", options).Info("init config success")
+	cfg.SetLogger(infoLog)
 
 	redisCli, err := cli.NewRedisWithOptions(&options.Redis)
 	Must(err)
@@ -91,44 +89,17 @@ func main() {
 	svc, err := service.NewAccountServiceWithOptions(mysqlCli, redisCli, emailCli, &options.Service)
 	Must(err)
 
-	grpcServer := grpc.NewServer(
-		rpcx.GRPCUnaryInterceptor(grpcLog, rpcx.WithGRPCUnaryInterceptorDefaultValidator()),
-	)
-	api.RegisterAccountServiceServer(grpcServer, svc)
+	grpcGateway, err := rpcx.NewGrpcGatewayWithOptions(&options.GrpcGateway)
+	refx.Must(err)
+	grpcGateway.SetLogger(infoLog, grpcLog)
 
-	go func() {
-		address, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%v", options.Grpc.Port))
-		Must(err)
-		Must(grpcServer.Serve(address))
-	}()
-
-	mux := runtime.NewServeMux(
-		rpcx.MuxWithMetadata(),
-		rpcx.MuxWithIncomingHeaderMatcher(),
-		rpcx.MuxWithOutgoingHeaderMatcher(),
-		rpcx.MuxWithProtoErrorHandler(),
-	)
-	Must(api.RegisterAccountServiceHandlerFromEndpoint(
-		context.Background(), mux, fmt.Sprintf("0.0.0.0:%v", options.Grpc.Port), []grpc.DialOption{grpc.WithInsecure()},
-	))
-	infoLog.Info(options)
-
-	httpServer := http.Server{Addr: fmt.Sprintf(":%v", options.Http.Port), Handler: mux}
-	go func() {
-		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			infoLog.Warnf("httpServer.ListenAndServe, err: [%v]", err)
-		}
-	}()
+	api.RegisterAccountServiceServer(grpcGateway.GRPCServer(), svc)
+	refx.Must(grpcGateway.RegisterServiceHandlerFunc(api.RegisterAccountServiceHandlerFromEndpoint))
+	grpcGateway.Run()
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 	<-stop
-	infoLog.Info("receive exit signal")
-	ctx, cancel := context.WithTimeout(context.Background(), options.ExitTimeout)
-	defer cancel()
-	if err := httpServer.Shutdown(ctx); err != nil {
-		infoLog.Warnf("httServer.Shutdown failed, err: [%v]", err)
-	}
-	grpcServer.Stop()
+	grpcGateway.Stop()
 	infoLog.Info("server exit properly")
 }
