@@ -9,13 +9,13 @@ dep:
 env:
   default:
     NAME: "rpc-account"
-  prod:
+  dev:
     NAMESPACE: "dev"
     REGISTRY_ENDPOINT: "{{.registry.aliyun.endpoint}}"
     REGISTRY_USERNAME: "{{.registry.aliyun.username}}"
     REGISTRY_PASSWORD: "{{.registry.aliyun.password}}"
     REGISTRY_NAMESPACE: "{{.registry.aliyun.namespace}}"
-    MYSQL_SERVER: "{{.mysql.server}}"
+    MYSQL_ENDPOINT: "{{.mysql.endpoint}}"
     MYSQL_ROOT_PASSWORD: "{{.mysql.rootPassword}}"
     MYSQL_USERNAME: "{{.mysql.username}}"
     MYSQL_PASSWORD: "{{.mysql.password}}"
