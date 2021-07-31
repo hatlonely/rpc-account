@@ -45,10 +45,10 @@ task:
       - docker push "${REGISTRY_ENDPOINT}/${REGISTRY_NAMESPACE}/${IMAGE_REPOSITORY}:${IMAGE_TAG}"
   mysql:
     step:
-      - sh ${DEP}/ops/tool/render.sh ops/sql/create_table.sql.tpl ${TMP}/sql/create_table.sql
+      - sh ${DEP}/ops/tool/render.sh ops/sql ${TMP}/sql
       - |
-        kubectl run -n prod -it --rm sql --image=mysql:5.7.30 --restart=Never -- \
-          mysql -uroot -h"${MYSQL_SERVER}" -p"${MYSQL_ROOT_PASSWORD}" -e "$(cat "tmp/${environment}/create_table.sql")"
+        kubectl run mysql-client --rm --tty -i --restart='Never' --image docker.io/bitnami/mysql:8.0.25-debian-10-r37 --namespace dev --command -- \
+          mysql -uroot -h"${MYSQL_ENDPOINT}" -p"${MYSQL_ROOT_PASSWORD}" -e "$(cat "${TMP}/sql/create_table.sql")"
   restart:
     step:
       - kubectl get pods -n "${NAMESPACE}" | grep "${NAME}" | awk '{print $1}' | xargs kubectl delete pods -n "${NAMESPACE}"
