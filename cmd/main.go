@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/hatlonely/go-kit/bind"
 	"github.com/hatlonely/go-kit/cli"
@@ -23,15 +22,6 @@ var Version string
 
 type Options struct {
 	flag.Options
-
-	Http struct {
-		Port int `dft:"80"`
-	}
-	Grpc struct {
-		Port int `dft:"6080"`
-	}
-
-	ExitTimeout time.Duration `dft:"10s"`
 
 	GrpcGateway rpcx.GrpcGatewayOptions
 	Redis       wrap.RedisClientWrapperOptions

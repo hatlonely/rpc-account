@@ -16,35 +16,71 @@ ingress:
 config:
   app: |
     {
-      "http": {
-        "port": 80
-      },
-      "grpc": {
-        "port": 6080
-      },
+      "grpcGateway": {
+        "httpPort": 80,
+        "grpcPort": 6080,
+        "exitTimeout": "20s",
+        "validators": [
+          "Default"
+        ],
+        "usePascalNameLogKey": false,
+        "usePascalNameErrKey": false,
+        "marshalUseProtoNames": true,
+        "marshalEmitUnpopulated": false,
+        "unmarshalDiscardUnknown": true,
+        "enableTrace": false,
+        "enableMetric": false,
+        "enablePprof": false,
+        "jaeger": {
+          "serviceName": "rpc-account",
+          "sampler": {
+            "type": "const",
+            "param": 1
+          },
+          "reporter": {
+            "logSpans": false
+          }
+        }
+      }
       "service": {
         "accountExpiration": "5m",
         "captchaExpiration": "30m"
       },
       "redis": {
-        "addr": "${REDIS_ADDRESS}",
-        "password": "${REDIS_PASSWORD}",
-        "dialTimeout": "200ms",
-        "readTimeout": "200ms",
-        "writeTimeout": "200ms",
-        "maxRetries": 3,
-        "poolSize": 20,
-        "db": 0
+        "redis": {
+          "addr": "${REDIS_ADDRESS}",
+          "password": "${REDIS_PASSWORD}",
+          "dialTimeout": "200ms",
+          "readTimeout": "200ms",
+          "writeTimeout": "200ms",
+          "maxRetries": 3,
+          "poolSize": 20,
+          "db": 0
+        },
+        "retry": {
+          "attempt": 3,
+          "delay": "1s",
+          "lastErrorOnly": true,
+          "delayType": "BackOff"
+        }
       },
       "mysql": {
-        "username": "${MYSQL_USERNAME}",
-        "password": "${MYSQL_PASSWORD}",
-        "database": "${MYSQL_DATABASE}",
-        "host": "${MYSQL_SERVER}",
-        "port": 3306,
-        "connMaxLifeTime": "60s",
-        "maxIdleConns": 10,
-        "maxOpenConns": 20
+        "gorm": {
+          "username": "${MYSQL_USERNAME}",
+          "password": "${MYSQL_PASSWORD}",
+          "database": "${MYSQL_DATABASE}",
+          "host": "${MYSQL_SERVER}",
+          "port": 3306,
+          "connMaxLifeTime": "60s",
+          "maxIdleConns": 10,
+          "maxOpenConns": 20
+        },
+        "retry": {
+          "attempt": 3,
+          "delay": "1s",
+          "lastErrorOnly": true,
+          "delayType": "BackOff"
+        }
       },
       "email": {
         "from": "${EMAIL_FROM}",
@@ -74,7 +110,8 @@ config:
               "msgChanLen": 200,
               "workerNum": 2,
               "elasticSearch": {
-                "uri": "http://${ELASTICSEARCH_SERVER}"
+                "uri": "http://${ELASTICSEARCH_ENDPOINT}",
+                "password": "${ELASTICSEARCH_PASSWORD}"
               }
             }
           }]
