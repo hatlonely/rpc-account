@@ -62,18 +62,18 @@ func main() {
 	refx.Must(cfg.Watch())
 	defer cfg.Stop()
 
-	refx.Must(bind.Bind(&options, []bind.Getter{flag.Instance(), bind.NewEnvGetter(bind.WithEnvPrefix("IMM_OPENAPI")), cfg}))
+	refx.Must(bind.Bind(&options, []bind.Getter{flag.Instance(), bind.NewEnvGetter(bind.WithEnvPrefix("IMM_OPENAPI")), cfg}, refx.WithCamelName()))
 
-	grpcLog, err := logger.NewLoggerWithOptions(&options.Logger.Grpc)
+	grpcLog, err := logger.NewLoggerWithOptions(&options.Logger.Grpc, refx.WithCamelName())
 	refx.Must(err)
-	infoLog, err := logger.NewLoggerWithOptions(&options.Logger.Info)
+	infoLog, err := logger.NewLoggerWithOptions(&options.Logger.Info, refx.WithCamelName())
 	refx.Must(err)
 	infoLog.With("options", options).Info("init config success")
 	cfg.SetLogger(infoLog)
 
-	redisCli, err := wrap.NewRedisClientWrapperWithOptions(&options.Redis)
+	redisCli, err := wrap.NewRedisClientWrapperWithOptions(&options.Redis, refx.WithCamelName())
 	Must(err)
-	mysqlCli, err := wrap.NewGORMDBWrapperWithOptions(&options.Mysql)
+	mysqlCli, err := wrap.NewGORMDBWrapperWithOptions(&options.Mysql, refx.WithCamelName())
 	Must(err)
 	emailCli := cli.NewEmailWithOptions(&options.Email)
 

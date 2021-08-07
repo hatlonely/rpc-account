@@ -74,7 +74,6 @@
   "logger": {
     "grpc": {
       "level": "Info",
-      "flatMap": true,
       "writers": [{
         "type": "RotateFile",
         "options": {
