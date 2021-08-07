@@ -60,8 +60,6 @@ func main() {
 	}
 	cfg, err := config.NewConfigWithSimpleFile(options.ConfigPath)
 	refx.Must(err)
-	refx.Must(cfg.Watch())
-	defer cfg.Stop()
 
 	refx.Must(bind.Bind(&options, []bind.Getter{flag.Instance(), bind.NewEnvGetter(bind.WithEnvPrefix("IMM_OPENAPI")), cfg}, refx.WithCamelName()))
 
@@ -71,6 +69,9 @@ func main() {
 	refx.Must(err)
 	infoLog.With("options", options).Info("init config success")
 	cfg.SetLogger(infoLog)
+
+	refx.Must(cfg.Watch())
+	defer cfg.Stop()
 
 	redisCli, err := wrap.NewRedisClientWrapperWithOptions(&options.Redis, refx.WithCamelName())
 	Must(err)
