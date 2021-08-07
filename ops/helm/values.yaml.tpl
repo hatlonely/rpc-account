@@ -39,17 +39,19 @@ config:
         "marshalUseProtoNames": true,
         "marshalEmitUnpopulated": false,
         "unmarshalDiscardUnknown": true,
-        "enableTrace": false,
-        "enableMetric": false,
-        "enablePprof": false,
+        "enableTrace": true,
+        "enableMetric": true,
+        "enablePprof": true,
         "jaeger": {
           "serviceName": "rpc-account",
           "sampler": {
             "type": "const",
-            "param": 1
+            "param": 1,
+            "samplingServerURL": "http://jaeger-agent.monitoring:5778/sampling"
           },
           "reporter": {
-            "logSpans": false
+            "logSpans": false,
+            "localAgentHostPort": "jaeger-agent.monitoring:6831"
           }
         }
       },
