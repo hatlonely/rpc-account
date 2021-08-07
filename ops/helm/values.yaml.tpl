@@ -1,20 +1,19 @@
-namespace: "${NAMESPACE}"
 name: "${NAME}"
 replicaCount: "${REPLICA_COUNT}"
 
 image:
-  repository: "${REGISTRY_SERVER}/${REGISTRY_NAMESPACE}/${IMAGE_REPOSITORY}"
+  repository: "${REGISTRY_ENDPOINT}/${REGISTRY_NAMESPACE}/${IMAGE_REPOSITORY}"
   tag: "${IMAGE_TAG}"
   pullPolicy: Always
-  pullSecret: "${IMAGE_PULL_SECRET}"
+  pullSecret: "${PULL_SECRET_NAME}"
 
 ingress:
   enable: true
   host: "${INGRESS_HOST}"
-  secretName: "${INGRESS_SECRET}"
+  secretName: "${SECRET_NAME}"
 
 config:
-  app: |
+  app.json: |
     {
       "grpcGateway": {
         "httpPort": 80,

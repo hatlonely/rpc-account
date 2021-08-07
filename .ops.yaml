@@ -10,6 +10,7 @@ env:
   default:
     NAME: "rpc-account"
   dev:
+    K8S_CONTEXT: "home-k8s"
     NAMESPACE: "dev"
     REGISTRY_ENDPOINT: "{{.registry.aliyun.endpoint}}"
     REGISTRY_USERNAME: "{{.registry.aliyun.username}}"
@@ -28,13 +29,12 @@ env:
     EMAIL_PORT: "{{.email.port}}"
     ELASTICSEARCH_ENDPOINT: "{{.elasticsearch.endpoint}}"
     ELASTICSEARCH_PASSWORD: "{{.elasticsearch.password}}"
-    IMAGE_PULL_SECRET: "hatlonely-pull-secrets"
+    PULL_SECRET_NAME: "hatlonely-pull-secret"
     IMAGE_REPOSITORY: "rpc-account"
     IMAGE_TAG: "$(git describe --tags | awk '{print(substr($0,2,length($0)))}')"
     REPLICA_COUNT: 3
     INGRESS_HOST: "k8s.account.hatlonely.com"
-    INGRESS_SECRET: "k8s-secret"
-    K8S_CONTEXT: "homek8s"
+    SECRET_NAME: "k8s-secret"
 
 task:
   image:
@@ -49,27 +49,23 @@ task:
       - |
         kubectl run mysql-client --rm --tty -i --restart='Never' --image docker.io/bitnami/mysql:8.0.25-debian-10-r37 --namespace dev --command -- \
           mysql -uroot -h"${MYSQL_ENDPOINT}" -p"${MYSQL_ROOT_PASSWORD}" -e "$(cat "${TMP}/sql/create_table.sql")"
+  helm:
+    args:
+      cmd:
+        type: string
+        default: diff
+        validation: x in ["diff", "install", "upgrade", "delete"]
+    step:
+      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
+      - sh ${DEP}/ops/tool/render.sh ${DEP}/ops/helm/myapp ${TMP}/helm/${NAME}
+      - sh ${DEP}/ops/tool/render.sh ops/helm/values.yaml.tpl ${TMP}/helm/${NAME}.yaml
+      - |
+        case "${cmd}" in
+          "diff"|"") helm diff upgrade "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/${NAME}.yaml" --allow-unreleased;;
+          "install") helm install "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/${NAME}.yaml";;
+          "upgrade") helm upgrade "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/${NAME}.yaml";;
+          "delete") helm delete "${NAME}" -n "${NAMESPACE}";;
+        esac
   restart:
     step:
       - kubectl get pods -n "${NAMESPACE}" | grep "${NAME}" | awk '{print $1}' | xargs kubectl delete pods -n "${NAMESPACE}"
-  render:
-    step:
-      - mkdir -p ${TMP}/helm && rm -rf "${TMP}/helm/${NAME}" && cp -r "${DEP}/ops/helm/myapp" "${TMP}/helm/${NAME}"
-      - sh ${DEP}/ops/tool/render.sh ops/helm/values.yaml.tpl ${TMP}/helm/values.yaml
-      - sh ${DEP}/ops/tool/render.sh ${DEP}/ops/helm/myapp/Chart.yaml ${TMP}/helm/${NAME}/Chart.yaml
-  diff:
-    step:
-      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
-      - helm diff upgrade "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/values.yaml"
-  install:
-    step:
-      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
-      - helm install "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/values.yaml"
-  delete:
-    step:
-      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
-      - helm delete "${NAME}" -n "${NAMESPACE}"
-  upgrade:
-    step:
-      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
-      - helm upgrade "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/values.yaml"
