@@ -121,7 +121,8 @@ config:
               "workerNum": 2,
               "es": {
                 "es": {
-                  "uri": "http://${ELASTICSEARCH_ENDPOINT}",
+                  "uri": "${ELASTICSEARCH_ENDPOINT}",
+                  "username": "elastic",
                   "password": "${ELASTICSEARCH_PASSWORD}"
                 },
                 "retry": {
