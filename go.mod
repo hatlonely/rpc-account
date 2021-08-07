@@ -8,7 +8,7 @@ require (
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.3.0
-	github.com/hatlonely/go-kit v1.0.21
+	github.com/hatlonely/go-kit v1.0.22-0.20210807103058-495916ceab20
 	github.com/jinzhu/gorm v1.9.16
 	github.com/pkg/errors v0.9.1
 	github.com/satori/go.uuid v1.2.0

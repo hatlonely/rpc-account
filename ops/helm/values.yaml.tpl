@@ -70,6 +70,11 @@ config:
           "poolSize": 20,
           "db": 0
         },
+        "wrapper": {
+          "name": "accountdb",
+          "enableTrace": true,
+          "enableMetric": true,
+        },
         "retry": {
           "attempt": 3,
           "delay": "1s",
@@ -87,6 +92,11 @@ config:
           "connMaxLifeTime": "60s",
           "maxIdleConns": 10,
           "maxOpenConns": 20
+        },
+        "wrapper": {
+          "name": "accountdb",
+          "enableTrace": true,
+          "enableMetric": true,
         },
         "retry": {
           "attempt": 3,
