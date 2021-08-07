@@ -11,6 +11,7 @@ import (
 	"github.com/hatlonely/go-kit/config"
 	"github.com/hatlonely/go-kit/flag"
 	"github.com/hatlonely/go-kit/logger"
+	_ "github.com/hatlonely/go-kit/logger/x"
 	"github.com/hatlonely/go-kit/refx"
 	"github.com/hatlonely/go-kit/rpcx"
 	"github.com/hatlonely/go-kit/wrap"
