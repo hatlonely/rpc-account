@@ -102,7 +102,6 @@ config:
       "logger": {
         "grpc": {
           "level": "Info",
-          "flatMap": true,
           "writers": [{
             "type": "RotateFile",
             "options": {
@@ -120,9 +119,17 @@ config:
               "timeout": "200ms",
               "msgChanLen": 200,
               "workerNum": 2,
-              "elasticSearch": {
-                "uri": "http://${ELASTICSEARCH_ENDPOINT}",
-                "password": "${ELASTICSEARCH_PASSWORD}"
+              "es": {
+                "es": {
+                  "uri": "http://${ELASTICSEARCH_ENDPOINT}",
+                  "password": "${ELASTICSEARCH_PASSWORD}"
+                },
+                "retry": {
+                  "attempt": 3,
+                  "delay": "1s",
+                  "lastErrorOnly": true,
+                  "delayType": "BackOff"
+                }
               }
             }
           }]
