@@ -24,7 +24,7 @@
         "logSpans": false
       }
     }
-  }
+  },
   "service": {
     "accountExpiration": "5m",
     "captchaExpiration": "30m"
