@@ -15,6 +15,7 @@ import (
 	"github.com/hatlonely/go-kit/refx"
 	"github.com/hatlonely/go-kit/rpcx"
 	"github.com/hatlonely/go-kit/wrap"
+
 	"github.com/hatlonely/rpc-account/api/gen/go/api"
 	"github.com/hatlonely/rpc-account/internal/service"
 )
