@@ -16,7 +16,7 @@ env:
     REGISTRY_USERNAME: "{{.registry.aliyun.username}}"
     REGISTRY_PASSWORD: "{{.registry.aliyun.password}}"
     REGISTRY_NAMESPACE: "{{.registry.aliyun.namespace}}"
-    MYSQL_ENDPOINT: "{{.mysql.endpoint}}"
+    MYSQL_ENDPOINT: "mysql"
     MYSQL_ROOT_PASSWORD: "{{.mysql.rootPassword}}"
     MYSQL_USERNAME: "{{.mysql.username}}"
     MYSQL_PASSWORD: "{{.mysql.password}}"
