@@ -34,7 +34,7 @@ codegen: api/account.proto
 	if [ ! -z "$(shell docker ps --filter name=protobuf -q)" ]; then \
 		docker stop protobuf; \
 	fi
-	docker run --name protobuf -d --rm registry.cn-beijing.aliyuncs.com/hatlonely/protobuf:1.0.0 tail -f /dev/null
+	docker run --name protobuf -d --rm registry.cn-shanghai.aliyuncs.com/hatlonely/protobuf:1.0.0 tail -f /dev/null
 	docker exec protobuf mkdir -p api
 	docker cp $< protobuf:/$<
 	docker cp rpc-api protobuf:/
