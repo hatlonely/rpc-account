@@ -45,10 +45,14 @@ task:
       - docker push "${REGISTRY_ENDPOINT}/${REGISTRY_NAMESPACE}/${IMAGE_REPOSITORY}:${IMAGE_TAG}"
   mysql:
     step:
-      - sh ${DEP}/ops/tool/render.sh ops/sql ${TMP}/sql
+      - sh ${DEP}/ops/tool/render.sh ops/mysql ${TMP}/mysql
       - |
-        kubectl run mysql-client --rm --tty -i --restart='Never' --image docker.io/bitnami/mysql:8.0.25-debian-10-r37 --namespace dev --command -- \
-          mysql -uroot -h"${MYSQL_ENDPOINT}" -p"${MYSQL_ROOT_PASSWORD}" -e "$(cat "${TMP}/sql/create_table.sql")"
+        case "${cmd}" in
+          "image") sh ${DEP}/ops/tool/image.sh sync "docker.io" "bitnami" "" "" "${REGISTRY_ENDPOINT}" "${REGISTRY_NAMESPACE}" "${REGISTRY_USERNAME}" "${REGISTRY_PASSWORD}" "mysql" 8.0.25-debian-10-r37;;
+          "run") kubectl run mysql-client --rm --tty -i --restart='Never' --image ${REGISTRY_ENDPOINT}/${REGISTRY_NAMESPACE}/mysql:8.0.25-debian-10-r37 --namespace ${NAMESPACE} \
+              --overrides="{ \"spec\": { \"template\": { \"spec\": { \"imagePullSecrets\": [{\"name\": \"${PULL_SECRET_NAME}\"}] } } } }" \
+              --command -- mysql -uroot -h"${MYSQL_ENDPOINT}" -p"${MYSQL_ROOT_PASSWORD}" -e "$(cat "${TMP}/mysql/init.sql")";;
+        esac
   helm:
     args:
       cmd:
