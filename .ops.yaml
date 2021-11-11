@@ -9,6 +9,8 @@ dep:
 env:
   default:
     NAME: "rpc-account"
+    IMAGE_REPOSITORY: "rpc-account"
+    IMAGE_TAG: "$(git describe --tags | awk '{print(substr($0,2,length($0)))}')"
   dev:
     K8S_CONTEXT: "home-k8s"
     NAMESPACE: "dev"
@@ -30,8 +32,6 @@ env:
     ELASTICSEARCH_ENDPOINT: "{{.elasticsearch.endpoint}}"
     ELASTICSEARCH_PASSWORD: "{{.elasticsearch.password}}"
     PULL_SECRET_NAME: "hatlonely-pull-secret"
-    IMAGE_REPOSITORY: "rpc-account"
-    IMAGE_TAG: "$(git describe --tags | awk '{print(substr($0,2,length($0)))}')"
     REPLICA_COUNT: 2
     INGRESS_HOST: "k8s.account.hatlonely.com"
     SECRET_NAME: "k8s-secret"
