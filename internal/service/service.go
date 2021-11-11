@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"time"
 
+	"google.golang.org/protobuf/types/known/emptypb"
+
 	"github.com/hatlonely/go-kit/cli"
 	"github.com/hatlonely/go-kit/kv"
 	"github.com/hatlonely/go-kit/wrap"
@@ -58,4 +60,8 @@ func NewAccountServiceWithOptions(mysqlCli *wrap.GORMDBWrapper, redisCli *wrap.R
 		kv:              kv,
 		options:         options,
 	}, nil
+}
+
+func (s *AccountService) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, nil
 }

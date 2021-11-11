@@ -44,7 +44,7 @@ message GetCaptchaReq {
 }
 
 service AccountService {
-  rpc Ping(Empty) returns (Empty) {
+  rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       get: "/ping"
     };

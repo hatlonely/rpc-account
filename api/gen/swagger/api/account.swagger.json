@@ -16,6 +16,28 @@
     "application/json"
   ],
   "paths": {
+    "/ping": {
+      "get": {
+        "operationId": "AccountService_Ping",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "AccountService"
+        ]
+      }
+    },
     "/v1/account/getcaptcha": {
       "post": {
         "operationId": "AccountService_GetCaptcha",
