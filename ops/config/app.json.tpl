@@ -11,7 +11,7 @@
     "marshalUseProtoNames": true,
     "marshalEmitUnpopulated": false,
     "unmarshalDiscardUnknown": true,
-    "enableTrace": true,
+    "enableTrace": false,
     "enableMetric": true,
     "enablePprof": true,
     "jaeger": {
@@ -67,7 +67,7 @@
     },
     "wrapper": {
       "name": "accountdb",
-      "enableTrace": true,
+      "enableTrace": false,
       "enableMetric": true,
     },
     "retry": {
