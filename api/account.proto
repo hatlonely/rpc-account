@@ -44,6 +44,12 @@ message GetCaptchaReq {
 }
 
 service AccountService {
+  rpc Ping(Empty) returns (Empty) {
+    option (google.api.http) = {
+      get: "/ping"
+    };
+  }
+
   rpc SignIn(SignInReq) returns (SignInRes) {
     option (google.api.http) = {
       post: "/v1/account/signin"
