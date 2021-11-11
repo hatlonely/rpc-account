@@ -46,21 +46,21 @@ message GetCaptchaReq {
 service AccountService {
   rpc SignIn(SignInReq) returns (SignInRes) {
     option (google.api.http) = {
-      post: "/v1/account/signin",
+      post: "/v1/account/signin"
       body: "*"
     };
   }
 
   rpc SignUp(SignUpReq) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/v1/account/signup",
+      post: "/v1/account/signup"
       body: "*"
     };
   }
 
   rpc SignOut(SignOutReq) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/v1/account/signout",
+      post: "/v1/account/signout"
       body: "*"
     };
   }
