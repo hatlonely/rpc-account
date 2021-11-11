@@ -61,13 +61,13 @@ task:
         validation: x in ["diff", "install", "upgrade", "delete"]
     step:
       - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
-      - sh ${DEP}/ops/tool/render.sh ${DEP}/ops/helm/myapp ${TMP}/helm/${NAME}
-      - sh ${DEP}/ops/tool/render.sh ops/helm/values.yaml.tpl ${TMP}/helm/${NAME}.yaml
+      - sh ${DEP}/ops/tool/render.sh ${DEP}/ops/helm/rpc-app ${TMP}/helm/${NAME}
+      - sh ${DEP}/ops/tool/render.sh ops/helm/values-adapter.yaml.tpl ${TMP}/helm/${NAME}/values-adapter.yaml
       - |
         case "${cmd}" in
-          "diff"|"") helm diff upgrade "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/${NAME}.yaml" --allow-unreleased;;
-          "install") helm install "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/${NAME}.yaml";;
-          "upgrade") helm upgrade "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/${NAME}.yaml";;
+          "diff"|"") helm diff upgrade "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/${NAME}/values-adapter.yaml" --allow-unreleased;;
+          "install") helm install "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/${NAME}/values-adapter.yaml";;
+          "upgrade") helm upgrade "${NAME}" -n "${NAMESPACE}" "${TMP}/helm/${NAME}" -f "${TMP}/helm/${NAME}/values-adapter.yaml";;
           "delete") helm delete "${NAME}" -n "${NAMESPACE}";;
         esac
   config:
