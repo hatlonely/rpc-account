@@ -44,6 +44,11 @@ task:
       - docker tag "${REGISTRY_NAMESPACE}/${IMAGE_REPOSITORY}:${IMAGE_TAG}" "${REGISTRY_ENDPOINT}/${REGISTRY_NAMESPACE}/${IMAGE_REPOSITORY}:${IMAGE_TAG}"
       - docker push "${REGISTRY_ENDPOINT}/${REGISTRY_NAMESPACE}/${IMAGE_REPOSITORY}:${IMAGE_TAG}"
   mysql:
+    args:
+      cmd:
+        type: string
+        default: run
+        validation: x in ["image", "run"]
     step:
       - sh ${DEP}/ops/tool/render.sh ops/mysql ${TMP}/mysql
       - |
