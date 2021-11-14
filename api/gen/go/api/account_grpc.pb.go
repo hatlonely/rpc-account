@@ -27,6 +27,7 @@ type AccountServiceClient interface {
 	UpdateAccount(ctx context.Context, in *Account, opts ...grpc.CallOption) (*Empty, error)
 	GetAccount(ctx context.Context, in *AccountID, opts ...grpc.CallOption) (*Account, error)
 	DelAccount(ctx context.Context, in *AccountID, opts ...grpc.CallOption) (*Empty, error)
+	GetAccountByPhoneOrEmail(ctx context.Context, in *GetAccountByPhoneOrEmailReq, opts ...grpc.CallOption) (*Account, error)
 	SignIn(ctx context.Context, in *SignInReq, opts ...grpc.CallOption) (*SignInRes, error)
 	SignUp(ctx context.Context, in *SignUpReq, opts ...grpc.CallOption) (*Empty, error)
 	SignOut(ctx context.Context, in *SignOutReq, opts ...grpc.CallOption) (*Empty, error)
@@ -86,6 +87,15 @@ func (c *accountServiceClient) DelAccount(ctx context.Context, in *AccountID, op
 	return out, nil
 }
 
+func (c *accountServiceClient) GetAccountByPhoneOrEmail(ctx context.Context, in *GetAccountByPhoneOrEmailReq, opts ...grpc.CallOption) (*Account, error) {
+	out := new(Account)
+	err := c.cc.Invoke(ctx, "/api.AccountService/GetAccountByPhoneOrEmail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *accountServiceClient) SignIn(ctx context.Context, in *SignInReq, opts ...grpc.CallOption) (*SignInRes, error) {
 	out := new(SignInRes)
 	err := c.cc.Invoke(ctx, "/api.AccountService/SignIn", in, out, opts...)
@@ -131,6 +141,7 @@ type AccountServiceServer interface {
 	UpdateAccount(context.Context, *Account) (*Empty, error)
 	GetAccount(context.Context, *AccountID) (*Account, error)
 	DelAccount(context.Context, *AccountID) (*Empty, error)
+	GetAccountByPhoneOrEmail(context.Context, *GetAccountByPhoneOrEmailReq) (*Account, error)
 	SignIn(context.Context, *SignInReq) (*SignInRes, error)
 	SignUp(context.Context, *SignUpReq) (*Empty, error)
 	SignOut(context.Context, *SignOutReq) (*Empty, error)
@@ -156,6 +167,9 @@ func (UnimplementedAccountServiceServer) GetAccount(context.Context, *AccountID)
 }
 func (UnimplementedAccountServiceServer) DelAccount(context.Context, *AccountID) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DelAccount not implemented")
+}
+func (UnimplementedAccountServiceServer) GetAccountByPhoneOrEmail(context.Context, *GetAccountByPhoneOrEmailReq) (*Account, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountByPhoneOrEmail not implemented")
 }
 func (UnimplementedAccountServiceServer) SignIn(context.Context, *SignInReq) (*SignInRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
@@ -272,6 +286,24 @@ func _AccountService_DelAccount_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccountService_GetAccountByPhoneOrEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAccountByPhoneOrEmailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).GetAccountByPhoneOrEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.AccountService/GetAccountByPhoneOrEmail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).GetAccountByPhoneOrEmail(ctx, req.(*GetAccountByPhoneOrEmailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AccountService_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SignInReq)
 	if err := dec(in); err != nil {
@@ -370,6 +402,10 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DelAccount",
 			Handler:    _AccountService_DelAccount_Handler,
+		},
+		{
+			MethodName: "GetAccountByPhoneOrEmail",
+			Handler:    _AccountService_GetAccountByPhoneOrEmail_Handler,
 		},
 		{
 			MethodName: "SignIn",

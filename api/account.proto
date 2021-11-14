@@ -30,6 +30,10 @@ message AccountID {
   string id = 1;
 }
 
+message GetAccountByPhoneOrEmailReq {
+  string username = 1 [(gogoproto.moretags) = "rule:\"len(x) < 64 && len(x) >= 8\""];
+}
+
 message SignInReq {
   string username = 1 [(gogoproto.moretags) = "rule:\"len(x) < 64 && len(x) >= 8\""];
   string password = 2 [(gogoproto.moretags) = "rule:\"len(x) < 64 && len(x) >= 8\""];
@@ -89,6 +93,13 @@ service AccountService {
   rpc DelAccount(AccountID) returns (Empty) {
     option (google.api.http) = {
       delete: "/v1/account/{id}"
+    };
+  }
+
+  rpc GetAccountByPhoneOrEmail(GetAccountByPhoneOrEmailReq) returns (Account) {
+    option (google.api.http) = {
+      post: "/v1/getAccountByPhoneOrEmail"
+      body: "*"
     };
   }
 
