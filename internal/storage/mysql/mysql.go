@@ -3,6 +3,8 @@ package mysql
 import (
 	"context"
 
+	"github.com/pkg/errors"
+
 	"github.com/hatlonely/go-kit/refx"
 	"github.com/hatlonely/go-kit/wrap"
 	"github.com/hatlonely/rpc-account/internal/storage"
@@ -16,7 +18,7 @@ func NewMySQLWithOptions(options *wrap.GORMDBWrapperOptions, opts ...refx.Option
 	db, err := wrap.NewGORMDBWrapperWithOptions(options, opts...)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.WithMessage(err, "wrap.NewGORMDBWrapperWithOptions failed")
 	}
 
 	if !db.HasTable(&storage.Account{}) {
@@ -24,11 +26,11 @@ func NewMySQLWithOptions(options *wrap.GORMDBWrapperOptions, opts ...refx.Option
 			Set(context.Background(), "gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4").
 			CreateTable(context.Background(), &storage.Account{}).
 			Unwrap().Error; err != nil {
-			return nil, err
+			return nil, errors.WithMessage(err, "db.CreateTable failed")
 		}
 	} else {
 		if err := db.AutoMigrate(context.Background(), &storage.Account{}).Unwrap().Error; err != nil {
-			return nil, err
+			return nil, errors.WithMessage(err, "db.AutoMigrate failed")
 		}
 	}
 
