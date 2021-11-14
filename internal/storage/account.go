@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"reflect"
 	"time"
 
@@ -20,6 +21,10 @@ type Account struct {
 }
 
 type Storage interface {
+	PutAccount(ctx context.Context, article *Account) (string, error)
+	GetAccount(ctx context.Context, id string) (*Account, error)
+	UpdateAccount(ctx context.Context, article *Account) error
+	DelAccount(ctx context.Context, id string) error
 }
 
 func RegisterStorage(key string, constructor interface{}) {
