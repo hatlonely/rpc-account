@@ -10,4 +10,4 @@ RUN echo "Asia/Shanghai" >> /etc/timezone
 
 COPY --from=build /go/src/build /work/rpc-account
 WORKDIR /work/rpc-account
-CMD [ "bin/account", "-c", "config/app.json" ]
+CMD [ "bin/account", "-c", "config/base.json" ]
