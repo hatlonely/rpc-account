@@ -1,6 +1,8 @@
 package redis
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 
 	"github.com/hatlonely/go-kit/refx"
@@ -12,17 +14,25 @@ func init() {
 	cache.RegisterCache("Redis", NewRedisWithOptions)
 }
 
-func NewRedisWithOptions(options *wrap.RedisClientWrapperOptions, opts ...refx.Option) (*Redis, error) {
-	client, err := wrap.NewRedisClientWrapperWithOptions(options, opts...)
+type Options struct {
+	RedisClientWrapper wrap.RedisClientWrapperOptions
+	Prefix             string
+	CaptchaExpiration  time.Duration
+}
+
+func NewRedisWithOptions(options *Options, opts ...refx.Option) (*Redis, error) {
+	client, err := wrap.NewRedisClientWrapperWithOptions(&options.RedisClientWrapper, opts...)
 	if err != nil {
 		return nil, errors.WithMessage(err, "wrap.NewRedisClientWrapperWithOptions failed")
 	}
 
 	return &Redis{
-		client: client,
+		client:  client,
+		options: options,
 	}, nil
 }
 
 type Redis struct {
-	client *wrap.RedisClientWrapper
+	client  *wrap.RedisClientWrapper
+	options *Options
 }
