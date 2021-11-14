@@ -9,20 +9,20 @@ import (
 )
 
 func init() {
-	cache.RegisterStorage("MySQL", NewMySQLWithOptions)
+	cache.RegisterCache("Redis", NewRedisWithOptions)
 }
 
-func NewMySQLWithOptions(options *wrap.RedisClientWrapperOptions, opts ...refx.Option) (*MySQL, error) {
+func NewRedisWithOptions(options *wrap.RedisClientWrapperOptions, opts ...refx.Option) (*Redis, error) {
 	client, err := wrap.NewRedisClientWrapperWithOptions(options, opts...)
 	if err != nil {
 		return nil, errors.WithMessage(err, "wrap.NewRedisClientWrapperWithOptions failed")
 	}
 
-	return &MySQL{
+	return &Redis{
 		client: client,
 	}, nil
 }
 
-type MySQL struct {
+type Redis struct {
 	client *wrap.RedisClientWrapper
 }

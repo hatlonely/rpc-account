@@ -10,7 +10,7 @@ import (
 type Cache interface {
 }
 
-func RegisterStorage(key string, constructor interface{}) {
+func RegisterCache(key string, constructor interface{}) {
 	refx.Register(reflect.TypeOf((*Cache)(nil)).Elem(), key, constructor)
 }
 
