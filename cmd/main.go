@@ -74,13 +74,7 @@ func main() {
 	refx.Must(cfg.Watch())
 	defer cfg.Stop()
 
-	redisCli, err := wrap.NewRedisClientWrapperWithOptions(&options.Redis, refx.WithCamelName())
-	Must(err)
-	mysqlCli, err := wrap.NewGORMDBWrapperWithOptions(&options.Mysql, refx.WithCamelName())
-	Must(err)
-	emailCli := cli.NewEmailWithOptions(&options.Email)
-
-	svc, err := service.NewAccountServiceWithOptions(mysqlCli, redisCli, emailCli, &options.Service)
+	svc, err := service.NewAccountServiceWithOptions(&options.Service, refx.WithCamelName())
 	Must(err)
 
 	grpcGateway, err := rpcx.NewGrpcGatewayWithOptions(&options.GrpcGateway)

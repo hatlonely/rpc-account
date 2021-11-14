@@ -16,8 +16,9 @@ func init() {
 
 type Options struct {
 	RedisClientWrapper wrap.RedisClientWrapperOptions
-	Prefix             string
-	CaptchaExpiration  time.Duration
+	Prefix             string        `dft:"account"`
+	CaptchaExpiration  time.Duration `dft:"5m"`
+	TokenExpiration    time.Duration `dft:"30m"`
 }
 
 func NewRedisWithOptions(options *Options, opts ...refx.Option) (*Redis, error) {

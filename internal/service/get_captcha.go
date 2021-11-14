@@ -7,7 +7,6 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/go-redis/redis"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/pkg/errors"
 
@@ -21,17 +20,9 @@ func GenerateCaptcha() string {
 }
 
 func (s *AccountService) GetCaptcha(ctx context.Context, req *api.GetCaptchaReq) (*empty.Empty, error) {
-	var captcha string
-	key := "captcha_" + req.Email
-	if val, err := s.redisCli.Get(ctx, key).Result(); err == redis.Nil {
-		captcha = GenerateCaptcha()
-		if err := s.redisCli.Set(ctx, key, captcha, s.options.CaptchaExpiration).Err(); err != nil {
-			return nil, errors.Wrapf(err, "redis set key [%v] failed", key)
-		}
-	} else if err != nil {
-		return nil, errors.Wrapf(err, "redis get key [%v] failed", key)
-	} else {
-		captcha = val
+	captcha, err := s.cache.GetOrSetCaptcha(ctx, req.Email)
+	if err != nil {
+		return nil, errors.WithMessagef(err, "cache.GetOrSetCaptcha failed")
 	}
 
 	buf := &bytes.Buffer{}

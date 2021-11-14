@@ -9,6 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+var ErrInvalidUsername = errors.New("InvalidUsername")
+
 type Account struct {
 	ID       string    `gorm:"type:char(32);primary_key" json:"id"`
 	Email    string    `gorm:"type:varchar(64);unique_index:email_idx" json:"email"`
@@ -25,6 +27,7 @@ type Storage interface {
 	GetAccount(ctx context.Context, id string) (*Account, error)
 	UpdateAccount(ctx context.Context, article *Account) error
 	DelAccount(ctx context.Context, id string) error
+	GetAccountByPhoneOrEmail(ctx context.Context, username string) (*Account, error)
 }
 
 func RegisterStorage(key string, constructor interface{}) {
