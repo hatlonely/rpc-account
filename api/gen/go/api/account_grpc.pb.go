@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -23,11 +22,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountServiceClient interface {
-	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	PutAccount(ctx context.Context, in *Account, opts ...grpc.CallOption) (*AccountID, error)
+	UpdateAccount(ctx context.Context, in *Account, opts ...grpc.CallOption) (*Empty, error)
+	GetAccount(ctx context.Context, in *AccountID, opts ...grpc.CallOption) (*Account, error)
+	DelAccount(ctx context.Context, in *AccountID, opts ...grpc.CallOption) (*Empty, error)
 	SignIn(ctx context.Context, in *SignInReq, opts ...grpc.CallOption) (*SignInRes, error)
-	SignUp(ctx context.Context, in *SignUpReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	SignOut(ctx context.Context, in *SignOutReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SignUp(ctx context.Context, in *SignUpReq, opts ...grpc.CallOption) (*Empty, error)
+	SignOut(ctx context.Context, in *SignOutReq, opts ...grpc.CallOption) (*Empty, error)
+	GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type accountServiceClient struct {
@@ -38,9 +41,45 @@ func NewAccountServiceClient(cc grpc.ClientConnInterface) AccountServiceClient {
 	return &accountServiceClient{cc}
 }
 
-func (c *accountServiceClient) Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *accountServiceClient) Ping(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/api.AccountService/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) PutAccount(ctx context.Context, in *Account, opts ...grpc.CallOption) (*AccountID, error) {
+	out := new(AccountID)
+	err := c.cc.Invoke(ctx, "/api.AccountService/PutAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) UpdateAccount(ctx context.Context, in *Account, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/api.AccountService/UpdateAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) GetAccount(ctx context.Context, in *AccountID, opts ...grpc.CallOption) (*Account, error) {
+	out := new(Account)
+	err := c.cc.Invoke(ctx, "/api.AccountService/GetAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountServiceClient) DelAccount(ctx context.Context, in *AccountID, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/api.AccountService/DelAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +95,8 @@ func (c *accountServiceClient) SignIn(ctx context.Context, in *SignInReq, opts .
 	return out, nil
 }
 
-func (c *accountServiceClient) SignUp(ctx context.Context, in *SignUpReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *accountServiceClient) SignUp(ctx context.Context, in *SignUpReq, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/api.AccountService/SignUp", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -65,8 +104,8 @@ func (c *accountServiceClient) SignUp(ctx context.Context, in *SignUpReq, opts .
 	return out, nil
 }
 
-func (c *accountServiceClient) SignOut(ctx context.Context, in *SignOutReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *accountServiceClient) SignOut(ctx context.Context, in *SignOutReq, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/api.AccountService/SignOut", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -74,8 +113,8 @@ func (c *accountServiceClient) SignOut(ctx context.Context, in *SignOutReq, opts
 	return out, nil
 }
 
-func (c *accountServiceClient) GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *accountServiceClient) GetCaptcha(ctx context.Context, in *GetCaptchaReq, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
 	err := c.cc.Invoke(ctx, "/api.AccountService/GetCaptcha", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -87,11 +126,15 @@ func (c *accountServiceClient) GetCaptcha(ctx context.Context, in *GetCaptchaReq
 // All implementations must embed UnimplementedAccountServiceServer
 // for forward compatibility
 type AccountServiceServer interface {
-	Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	Ping(context.Context, *Empty) (*Empty, error)
+	PutAccount(context.Context, *Account) (*AccountID, error)
+	UpdateAccount(context.Context, *Account) (*Empty, error)
+	GetAccount(context.Context, *AccountID) (*Account, error)
+	DelAccount(context.Context, *AccountID) (*Empty, error)
 	SignIn(context.Context, *SignInReq) (*SignInRes, error)
-	SignUp(context.Context, *SignUpReq) (*emptypb.Empty, error)
-	SignOut(context.Context, *SignOutReq) (*emptypb.Empty, error)
-	GetCaptcha(context.Context, *GetCaptchaReq) (*emptypb.Empty, error)
+	SignUp(context.Context, *SignUpReq) (*Empty, error)
+	SignOut(context.Context, *SignOutReq) (*Empty, error)
+	GetCaptcha(context.Context, *GetCaptchaReq) (*Empty, error)
 	mustEmbedUnimplementedAccountServiceServer()
 }
 
@@ -99,19 +142,31 @@ type AccountServiceServer interface {
 type UnimplementedAccountServiceServer struct {
 }
 
-func (UnimplementedAccountServiceServer) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+func (UnimplementedAccountServiceServer) Ping(context.Context, *Empty) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedAccountServiceServer) PutAccount(context.Context, *Account) (*AccountID, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PutAccount not implemented")
+}
+func (UnimplementedAccountServiceServer) UpdateAccount(context.Context, *Account) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccount not implemented")
+}
+func (UnimplementedAccountServiceServer) GetAccount(context.Context, *AccountID) (*Account, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccount not implemented")
+}
+func (UnimplementedAccountServiceServer) DelAccount(context.Context, *AccountID) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelAccount not implemented")
 }
 func (UnimplementedAccountServiceServer) SignIn(context.Context, *SignInReq) (*SignInRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignIn not implemented")
 }
-func (UnimplementedAccountServiceServer) SignUp(context.Context, *SignUpReq) (*emptypb.Empty, error) {
+func (UnimplementedAccountServiceServer) SignUp(context.Context, *SignUpReq) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
 }
-func (UnimplementedAccountServiceServer) SignOut(context.Context, *SignOutReq) (*emptypb.Empty, error) {
+func (UnimplementedAccountServiceServer) SignOut(context.Context, *SignOutReq) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignOut not implemented")
 }
-func (UnimplementedAccountServiceServer) GetCaptcha(context.Context, *GetCaptchaReq) (*emptypb.Empty, error) {
+func (UnimplementedAccountServiceServer) GetCaptcha(context.Context, *GetCaptchaReq) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCaptcha not implemented")
 }
 func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
@@ -128,7 +183,7 @@ func RegisterAccountServiceServer(s grpc.ServiceRegistrar, srv AccountServiceSer
 }
 
 func _AccountService_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -140,7 +195,79 @@ func _AccountService_Ping_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/api.AccountService/Ping",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).Ping(ctx, req.(*emptypb.Empty))
+		return srv.(AccountServiceServer).Ping(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_PutAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Account)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).PutAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.AccountService/PutAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).PutAccount(ctx, req.(*Account))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_UpdateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Account)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).UpdateAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.AccountService/UpdateAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).UpdateAccount(ctx, req.(*Account))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).GetAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.AccountService/GetAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).GetAccount(ctx, req.(*AccountID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccountService_DelAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServiceServer).DelAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.AccountService/DelAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServiceServer).DelAccount(ctx, req.(*AccountID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -227,6 +354,22 @@ var AccountService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _AccountService_Ping_Handler,
+		},
+		{
+			MethodName: "PutAccount",
+			Handler:    _AccountService_PutAccount_Handler,
+		},
+		{
+			MethodName: "UpdateAccount",
+			Handler:    _AccountService_UpdateAccount_Handler,
+		},
+		{
+			MethodName: "GetAccount",
+			Handler:    _AccountService_GetAccount_Handler,
+		},
+		{
+			MethodName: "DelAccount",
+			Handler:    _AccountService_DelAccount_Handler,
 		},
 		{
 			MethodName: "SignIn",

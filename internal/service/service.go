@@ -12,7 +12,6 @@ import (
 	"github.com/hatlonely/rpc-account/internal/storage"
 	_ "github.com/hatlonely/rpc-account/internal/storage/mysql"
 	"github.com/pkg/errors"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Options struct {
@@ -55,6 +54,6 @@ func NewAccountServiceWithOptions(options *Options, opts ...refx.Option) (*Accou
 	}, nil
 }
 
-func (s *AccountService) Ping(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
-	return &emptypb.Empty{}, nil
+func (s *AccountService) Ping(context.Context, *api.Empty) (*api.Empty, error) {
+	return &api.Empty{}, nil
 }

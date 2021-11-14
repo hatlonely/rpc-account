@@ -7,10 +7,8 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/pkg/errors"
-
 	"github.com/hatlonely/rpc-account/api/gen/go/api"
+	"github.com/pkg/errors"
 )
 
 func GenerateCaptcha() string {
@@ -19,7 +17,7 @@ func GenerateCaptcha() string {
 	return fmt.Sprintf("%06d", binary.LittleEndian.Uint64(buf)%1000000)
 }
 
-func (s *AccountService) GetCaptcha(ctx context.Context, req *api.GetCaptchaReq) (*empty.Empty, error) {
+func (s *AccountService) GetCaptcha(ctx context.Context, req *api.GetCaptchaReq) (*api.Empty, error) {
 	captcha, err := s.cache.GetOrSetCaptcha(ctx, req.Email)
 	if err != nil {
 		return nil, errors.WithMessagef(err, "cache.GetOrSetCaptcha failed")
@@ -37,7 +35,7 @@ func (s *AccountService) GetCaptcha(ctx context.Context, req *api.GetCaptchaReq)
 		return nil, errors.Wrapf(err, "email [%v] send failed", req.Email)
 	}
 
-	return &empty.Empty{}, nil
+	return &api.Empty{}, nil
 }
 
 var captchaTpl = `<html>

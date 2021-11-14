@@ -23,7 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "properties": {}
+              "$ref": "#/definitions/apiEmpty"
             }
           },
           "default": {
@@ -38,14 +38,163 @@
         ]
       }
     },
-    "/v1/account/getcaptcha": {
+    "/v1/account": {
+      "post": {
+        "operationId": "AccountService_PutAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiAccountID"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiAccount"
+            }
+          }
+        ],
+        "tags": [
+          "AccountService"
+        ]
+      }
+    },
+    "/v1/account/{id}": {
+      "get": {
+        "operationId": "AccountService_GetAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiAccount"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccountService"
+        ]
+      },
+      "delete": {
+        "operationId": "AccountService_DelAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiEmpty"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccountService"
+        ]
+      },
+      "put": {
+        "operationId": "AccountService_UpdateAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiEmpty"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "birthday": {
+                  "type": "string"
+                },
+                "gender": {
+                  "$ref": "#/definitions/apiGender"
+                },
+                "avatar": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "AccountService"
+        ]
+      }
+    },
+    "/v1/getcaptcha": {
       "post": {
         "operationId": "AccountService_GetCaptcha",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "properties": {}
+              "$ref": "#/definitions/apiEmpty"
             }
           },
           "default": {
@@ -60,7 +209,7 @@
         ]
       }
     },
-    "/v1/account/signin": {
+    "/v1/signin": {
       "post": {
         "operationId": "AccountService_SignIn",
         "responses": {
@@ -92,14 +241,14 @@
         ]
       }
     },
-    "/v1/account/signout": {
+    "/v1/signout": {
       "post": {
         "operationId": "AccountService_SignOut",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "properties": {}
+              "$ref": "#/definitions/apiEmpty"
             }
           },
           "default": {
@@ -124,14 +273,14 @@
         ]
       }
     },
-    "/v1/account/signup": {
+    "/v1/signup": {
       "post": {
         "operationId": "AccountService_SignUp",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "properties": {}
+              "$ref": "#/definitions/apiEmpty"
             }
           },
           "default": {
@@ -158,6 +307,46 @@
     }
   },
   "definitions": {
+    "apiAccount": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string"
+        },
+        "gender": {
+          "$ref": "#/definitions/apiGender"
+        },
+        "avatar": {
+          "type": "string"
+        }
+      }
+    },
+    "apiAccountID": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "apiEmpty": {
+      "type": "object"
+    },
     "apiGender": {
       "type": "string",
       "enum": [

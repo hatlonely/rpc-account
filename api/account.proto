@@ -5,13 +5,29 @@ package api;
 option go_package="github.com/hatlonely/rpc-account/api/gen/go/api";
 
 import "google/api/annotations.proto";
-import "google/protobuf/empty.proto";
 import "gogoproto/gogo.proto";
+
+message Empty {}
 
 enum Gender {
   Unknown = 0;
   Male = 1;
   Female = 2;
+}
+
+message Account {
+  string id = 1;
+  string email = 2 [(gogoproto.moretags) = "rule:\"isEmail(x)\""];
+  string phone = 3 [(gogoproto.moretags) = "rule:\"isPhone(x)\""];
+  string name = 4 [(gogoproto.moretags) = "rule:\"len(x) < 64 && len(x) >= 8\""];
+  string password = 5;
+  string birthday = 6;
+  Gender gender = 7 [(gogoproto.moretags) = "rule:\"x in ['male', 'female']\""];
+  string avatar = 8;
+}
+
+message AccountID {
+  string id = 1;
 }
 
 message SignInReq {
@@ -44,36 +60,62 @@ message GetCaptchaReq {
 }
 
 service AccountService {
-  rpc Ping(google.protobuf.Empty) returns (google.protobuf.Empty) {
+  rpc Ping(Empty) returns (Empty) {
     option (google.api.http) = {
       get: "/ping"
     };
   }
 
+  rpc PutAccount(Account) returns (AccountID) {
+    option (google.api.http) = {
+      post: "/v1/account"
+      body: "*"
+    };
+  }
+
+  rpc UpdateAccount(Account) returns (Empty) {
+    option (google.api.http) = {
+      put: "/v1/account/{id}"
+      body: "*"
+    };
+  }
+
+  rpc GetAccount(AccountID) returns (Account) {
+    option (google.api.http) = {
+      get: "/v1/account/{id}"
+    };
+  }
+
+  rpc DelAccount(AccountID) returns (Empty) {
+    option (google.api.http) = {
+      delete: "/v1/account/{id}"
+    };
+  }
+
   rpc SignIn(SignInReq) returns (SignInRes) {
     option (google.api.http) = {
-      post: "/v1/account/signin"
+      post: "/v1/signin"
       body: "*"
     };
   }
 
-  rpc SignUp(SignUpReq) returns (google.protobuf.Empty) {
+  rpc SignUp(SignUpReq) returns (Empty) {
     option (google.api.http) = {
-      post: "/v1/account/signup"
+      post: "/v1/signup"
       body: "*"
     };
   }
 
-  rpc SignOut(SignOutReq) returns (google.protobuf.Empty) {
+  rpc SignOut(SignOutReq) returns (Empty) {
     option (google.api.http) = {
-      post: "/v1/account/signout"
+      post: "/v1/signout"
       body: "*"
     };
   }
 
-  rpc GetCaptcha(GetCaptchaReq) returns (google.protobuf.Empty) {
+  rpc GetCaptcha(GetCaptchaReq) returns (Empty) {
     option (google.api.http) = {
-      post: "/v1/account/getcaptcha"
+      post: "/v1/getcaptcha"
     };
   }
 }

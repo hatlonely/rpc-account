@@ -5,7 +5,6 @@ import (
 
 	"github.com/hatlonely/rpc-account/internal/cache"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/hatlonely/go-kit/rpcx"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
@@ -15,7 +14,7 @@ import (
 	"github.com/hatlonely/rpc-account/internal/storage"
 )
 
-func (s *AccountService) SignUp(ctx context.Context, req *api.SignUpReq) (*empty.Empty, error) {
+func (s *AccountService) SignUp(ctx context.Context, req *api.SignUpReq) (*api.Empty, error) {
 	val, err := s.cache.GetCaptcha(ctx, req.Email)
 	if err == cache.ErrNotFound {
 		return nil, rpcx.NewErrorf(errors.New("captcha is not exists"), codes.InvalidArgument, "InvalidArgument", "captcha is not exists")
@@ -45,5 +44,5 @@ func (s *AccountService) SignUp(ctx context.Context, req *api.SignUpReq) (*empty
 		return nil, errors.Wrap(err, "s.storage.PutAccount failed")
 	}
 
-	return &empty.Empty{}, nil
+	return &api.Empty{}, nil
 }
