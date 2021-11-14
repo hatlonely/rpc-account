@@ -31,7 +31,7 @@ type Service struct {
 	captchaEmailTpl *template.Template
 }
 
-func NewAccountServiceWithOptions(options *Options, opts ...refx.Option) (*Service, error) {
+func NewServiceWithOptions(options *Options, opts ...refx.Option) (*Service, error) {
 	captchaEmailTpl, err := template.New("captcha").Parse(captchaTpl)
 	if err != nil {
 		return nil, errors.Wrapf(err, "template.New failed")

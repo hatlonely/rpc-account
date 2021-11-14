@@ -71,7 +71,7 @@ func main() {
 	refx.Must(cfg.Watch())
 	defer cfg.Stop()
 
-	svc, err := service.NewAccountServiceWithOptions(&options.Service, opts...)
+	svc, err := service.NewServiceWithOptions(&options.Service, opts...)
 	Must(err)
 
 	grpcGateway, err := rpcx.NewGrpcGatewayWithOptions(&options.GrpcGateway, opts...)

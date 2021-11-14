@@ -26,7 +26,7 @@ func init() {
 	//if err != nil {
 	//	panic(err)
 	//}
-	//service, err = NewAccountServiceWithOptions(mysqlCli, redisCli, emailCli)
+	//service, err = NewServiceWithOptions(mysqlCli, redisCli, emailCli)
 	//if err != nil {
 	//	panic(err)
 	//}
