@@ -15,13 +15,13 @@ ingress:
 config:
   base.json: |
     {
-      "Decoder": {
+      "decoder": {
         "type": "Json"
       },
-      "Provider": {
-        "Type": "Local",
-        "Options": {
-          "Filename": "config/app.json"
+      "provider": {
+        "type": "Local",
+        "options": {
+          "filename": "config/app.json"
         }
       }
     }

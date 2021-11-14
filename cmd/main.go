@@ -39,8 +39,10 @@ func Must(err error) {
 }
 
 func main() {
+	opts := []refx.Option{refx.WithCamelName()}
+
 	var options Options
-	refx.Must(flag.Struct(&options))
+	refx.Must(flag.Struct(&options, opts...))
 	refx.Must(flag.Parse(flag.WithJsonVal()))
 	if options.Help {
 		fmt.Println(flag.Usage())
@@ -54,10 +56,8 @@ func main() {
 	if options.ConfigPath == "" {
 		options.ConfigPath = "config/base.json"
 	}
-	cfg, err := config.NewConfigWithBaseFile(options.ConfigPath)
+	cfg, err := config.NewConfigWithBaseFile(options.ConfigPath, opts...)
 	refx.Must(err)
-
-	opts := []refx.Option{refx.WithCamelName()}
 
 	refx.Must(bind.Bind(&options, []bind.Getter{flag.Instance(), bind.NewEnvGetter(bind.WithEnvPrefix("RPC_ACCOUNT")), cfg}, opts...))
 
