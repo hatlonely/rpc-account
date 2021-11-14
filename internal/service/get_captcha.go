@@ -17,7 +17,7 @@ func GenerateCaptcha() string {
 	return fmt.Sprintf("%06d", binary.LittleEndian.Uint64(buf)%1000000)
 }
 
-func (s *AccountService) GetCaptcha(ctx context.Context, req *api.GetCaptchaReq) (*api.Empty, error) {
+func (s *Service) GetCaptcha(ctx context.Context, req *api.GetCaptchaReq) (*api.Empty, error) {
 	captcha, err := s.cache.GetOrSetCaptcha(ctx, req.Email)
 	if err != nil {
 		return nil, errors.WithMessagef(err, "cache.GetOrSetCaptcha failed")

@@ -3,18 +3,16 @@ package service
 import (
 	"context"
 
-	"github.com/hatlonely/rpc-account/internal/cache"
-
 	"github.com/hatlonely/go-kit/rpcx"
+	"github.com/hatlonely/rpc-account/api/gen/go/api"
+	"github.com/hatlonely/rpc-account/internal/cache"
+	"github.com/hatlonely/rpc-account/internal/storage"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
 	"google.golang.org/grpc/codes"
-
-	"github.com/hatlonely/rpc-account/api/gen/go/api"
-	"github.com/hatlonely/rpc-account/internal/storage"
 )
 
-func (s *AccountService) SignUp(ctx context.Context, req *api.SignUpReq) (*api.Empty, error) {
+func (s *Service) SignUp(ctx context.Context, req *api.SignUpReq) (*api.Empty, error) {
 	val, err := s.cache.GetCaptcha(ctx, req.Email)
 	if err == cache.ErrNotFound {
 		return nil, rpcx.NewErrorf(errors.New("captcha is not exists"), codes.InvalidArgument, "InvalidArgument", "captcha is not exists")

@@ -11,7 +11,7 @@ import (
 	"github.com/hatlonely/rpc-account/internal/storage"
 )
 
-func (s *AccountService) SignIn(ctx context.Context, req *api.SignInReq) (*api.SignInRes, error) {
+func (s *Service) SignIn(ctx context.Context, req *api.SignInReq) (*api.SignInRes, error) {
 	account, err := s.storage.GetAccountByPhoneOrEmail(ctx, req.Username)
 	if err != nil {
 		if err == storage.ErrInvalidUsername {

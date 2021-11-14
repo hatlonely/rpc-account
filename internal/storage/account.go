@@ -23,9 +23,9 @@ type Account struct {
 }
 
 type Storage interface {
-	PutAccount(ctx context.Context, article *Account) (string, error)
+	PutAccount(ctx context.Context, account *Account) (string, error)
 	GetAccount(ctx context.Context, id string) (*Account, error)
-	UpdateAccount(ctx context.Context, article *Account) error
+	UpdateAccount(ctx context.Context, account *Account) error
 	DelAccount(ctx context.Context, id string) error
 	GetAccountByPhoneOrEmail(ctx context.Context, username string) (*Account, error)
 }

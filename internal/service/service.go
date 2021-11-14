@@ -20,7 +20,7 @@ type Options struct {
 	Email   cli.EmailOptions
 }
 
-type AccountService struct {
+type Service struct {
 	api.UnsafeAccountServiceServer
 
 	options *Options
@@ -31,7 +31,7 @@ type AccountService struct {
 	captchaEmailTpl *template.Template
 }
 
-func NewAccountServiceWithOptions(options *Options, opts ...refx.Option) (*AccountService, error) {
+func NewAccountServiceWithOptions(options *Options, opts ...refx.Option) (*Service, error) {
 	captchaEmailTpl, err := template.New("captcha").Parse(captchaTpl)
 	if err != nil {
 		return nil, errors.Wrapf(err, "template.New failed")
@@ -46,7 +46,7 @@ func NewAccountServiceWithOptions(options *Options, opts ...refx.Option) (*Accou
 		return nil, errors.WithMessage(err, "storage.NewStorageWithOptions failed")
 	}
 
-	return &AccountService{
+	return &Service{
 		captchaEmailTpl: captchaEmailTpl,
 		options:         options,
 		cache:           cache,
@@ -54,6 +54,6 @@ func NewAccountServiceWithOptions(options *Options, opts ...refx.Option) (*Accou
 	}, nil
 }
 
-func (s *AccountService) Ping(context.Context, *api.Empty) (*api.Empty, error) {
+func (s *Service) Ping(context.Context, *api.Empty) (*api.Empty, error) {
 	return &api.Empty{}, nil
 }

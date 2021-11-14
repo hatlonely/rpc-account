@@ -9,7 +9,7 @@ import (
 var emailCli *cli.EmailCli
 var mysqlCli *gorm.DB
 var redisCli *redis.Client
-var service *AccountService
+var service *Service
 
 func init() {
 	//var err error
