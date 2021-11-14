@@ -4,12 +4,13 @@ import (
 	"context"
 	"html/template"
 
-	"github.com/hatlonely/rpc-account/internal/storage"
-
 	"github.com/hatlonely/go-kit/cli"
 	"github.com/hatlonely/go-kit/refx"
 	"github.com/hatlonely/rpc-account/api/gen/go/api"
 	"github.com/hatlonely/rpc-account/internal/cache"
+	_ "github.com/hatlonely/rpc-account/internal/cache/redis"
+	"github.com/hatlonely/rpc-account/internal/storage"
+	_ "github.com/hatlonely/rpc-account/internal/storage/mysql"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
