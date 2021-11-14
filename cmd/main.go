@@ -62,11 +62,13 @@ func main() {
 	cfg, err := config.NewConfigWithSimpleFile(options.ConfigPath)
 	refx.Must(err)
 
-	refx.Must(bind.Bind(&options, []bind.Getter{flag.Instance(), bind.NewEnvGetter(bind.WithEnvPrefix("IMM_OPENAPI")), cfg}, refx.WithCamelName()))
+	opts := []refx.Option{refx.WithCamelName()}
 
-	grpcLog, err := logger.NewLoggerWithOptions(&options.Logger.Grpc, refx.WithCamelName())
+	refx.Must(bind.Bind(&options, []bind.Getter{flag.Instance(), bind.NewEnvGetter(bind.WithEnvPrefix("RPC_ACCOUNT")), cfg}, opts...))
+
+	grpcLog, err := logger.NewLoggerWithOptions(&options.Logger.Grpc, opts...)
 	refx.Must(err)
-	infoLog, err := logger.NewLoggerWithOptions(&options.Logger.Info, refx.WithCamelName())
+	infoLog, err := logger.NewLoggerWithOptions(&options.Logger.Info, opts...)
 	refx.Must(err)
 	infoLog.With("options", options).Info("init config success")
 	cfg.SetLogger(infoLog)
@@ -74,10 +76,10 @@ func main() {
 	refx.Must(cfg.Watch())
 	defer cfg.Stop()
 
-	svc, err := service.NewAccountServiceWithOptions(&options.Service, refx.WithCamelName())
+	svc, err := service.NewAccountServiceWithOptions(&options.Service, opts...)
 	Must(err)
 
-	grpcGateway, err := rpcx.NewGrpcGatewayWithOptions(&options.GrpcGateway)
+	grpcGateway, err := rpcx.NewGrpcGatewayWithOptions(&options.GrpcGateway, opts...)
 	refx.Must(err)
 	grpcGateway.SetLogger(infoLog, grpcLog)
 
