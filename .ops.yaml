@@ -90,9 +90,9 @@ task:
       - |
         cd ${TMP}/config && touch app_local.json;
         case "${cmd}" in
-          "diff"|"") cfg --inBaseFile base_local.json -a diff --outBaseFile base.json;;
-          "get") cfg --inBaseFile base.json -a get | jq .;;
-          "put") cfg --inBaseFile base_local.json -a put --outBaseFile base.json;;
+          "diff"|"") cfg --camelName --inBaseFile base_local.json -a diff --outBaseFile base.json;;
+          "get") cfg --camelName --inBaseFile base.json -a get | jq .;;
+          "put") cfg --camelName --inBaseFile base_local.json -a put --outBaseFile base.json;;
         esac
   restart:
     step:
