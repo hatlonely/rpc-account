@@ -7,14 +7,12 @@ import (
 	"syscall"
 
 	"github.com/hatlonely/go-kit/bind"
-	"github.com/hatlonely/go-kit/cli"
 	"github.com/hatlonely/go-kit/config"
 	"github.com/hatlonely/go-kit/flag"
 	"github.com/hatlonely/go-kit/logger"
 	_ "github.com/hatlonely/go-kit/logger/x"
 	"github.com/hatlonely/go-kit/refx"
 	"github.com/hatlonely/go-kit/rpcx"
-	"github.com/hatlonely/go-kit/wrap"
 
 	"github.com/hatlonely/rpc-account/api/gen/go/api"
 	"github.com/hatlonely/rpc-account/internal/service"
@@ -26,9 +24,6 @@ type Options struct {
 	flag.Options
 
 	GrpcGateway rpcx.GrpcGatewayOptions
-	Redis       wrap.RedisClientWrapperOptions
-	Mysql       wrap.GORMDBWrapperOptions
-	Email       cli.EmailOptions
 	Service     service.Options
 
 	Logger struct {

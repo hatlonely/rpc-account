@@ -28,60 +28,69 @@
     }
   },
   "service": {
-    "accountExpiration": "5m",
-    "captchaExpiration": "30m"
-  },
-  "redis": {
-    "redis": {
-      "addr": "${REDIS_ADDRESS}",
-      "password": "${REDIS_PASSWORD}",
-      "dialTimeout": "200ms",
-      "readTimeout": "200ms",
-      "writeTimeout": "200ms",
-      "maxRetries": 3,
-      "poolSize": 20,
-      "db": 0
+    "email": {
+      "from": "${EMAIL_FROM}",
+      "password": "${EMAIL_PASSWORD}",
+      "server": "${EMAIL_SERVER}",
+      "port": ${EMAIL_PORT}
     },
-    "wrapper": {
-      "name": "accountdb",
-      "enableTrace": true,
-      "enableMetric": true,
+    "cache": {
+      "type": "Redis",
+      "options": {
+        "accountExpiration": "5m",
+        "captchaExpiration": "30m",
+        "prefix": "account",
+        "redisClientWrapper": {
+          "redis": {
+            "addr": "${REDIS_ADDRESS}",
+            "password": "${REDIS_PASSWORD}",
+            "dialTimeout": "200ms",
+            "readTimeout": "200ms",
+            "writeTimeout": "200ms",
+            "maxRetries": 3,
+            "poolSize": 20,
+            "db": 0
+          },
+          "wrapper": {
+            "name": "accountdb",
+            "enableTrace": true,
+            "enableMetric": true,
+          },
+          "retry": {
+            "attempt": 3,
+            "delay": "1s",
+            "lastErrorOnly": true,
+            "delayType": "BackOff"
+          }
+        }
+      }
     },
-    "retry": {
-      "attempt": 3,
-      "delay": "1s",
-      "lastErrorOnly": true,
-      "delayType": "BackOff"
+    "storage": {
+      "type": "MySQL",
+      "options": {
+        "gorm": {
+          "username": "${MYSQL_USERNAME}",
+          "password": "${MYSQL_PASSWORD}",
+          "database": "${MYSQL_DATABASE}",
+          "host": "${MYSQL_ENDPOINT}",
+          "port": 3306,
+          "connMaxLifeTime": "60s",
+          "maxIdleConns": 10,
+          "maxOpenConns": 20
+        },
+        "wrapper": {
+          "name": "accountdb",
+          "enableTrace": false,
+          "enableMetric": true,
+        },
+        "retry": {
+          "attempt": 3,
+          "delay": "1s",
+          "lastErrorOnly": true,
+          "delayType": "BackOff"
+        }
+      }
     }
-  },
-  "mysql": {
-    "gorm": {
-      "username": "${MYSQL_USERNAME}",
-      "password": "${MYSQL_PASSWORD}",
-      "database": "${MYSQL_DATABASE}",
-      "host": "${MYSQL_ENDPOINT}",
-      "port": 3306,
-      "connMaxLifeTime": "60s",
-      "maxIdleConns": 10,
-      "maxOpenConns": 20
-    },
-    "wrapper": {
-      "name": "accountdb",
-      "enableTrace": false,
-      "enableMetric": true,
-    },
-    "retry": {
-      "attempt": 3,
-      "delay": "1s",
-      "lastErrorOnly": true,
-      "delayType": "BackOff"
-    }
-  },
-  "email": {
-    "from": "${EMAIL_FROM}",
-    "password": "${EMAIL_PASSWORD}",
-    "server": "${EMAIL_SERVER}",
-    "port": ${EMAIL_PORT}
   },
   "logger": {
     "grpc": {

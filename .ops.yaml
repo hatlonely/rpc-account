@@ -88,7 +88,7 @@ task:
     step:
       - sh ${DEP}/ops/tool/render.sh ops/config ${TMP}/config
       - |
-        cd ${TMP}/config;
+        cd ${TMP}/config && touch app_local.json;
         case "${cmd}" in
           "diff"|"") cfg --inBaseFile base_local.json -a diff --outBaseFile base.json;;
           "get") cfg --inBaseFile base.json -a get | jq .;;

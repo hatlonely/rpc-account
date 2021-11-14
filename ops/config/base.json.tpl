@@ -5,7 +5,7 @@
   "Provider": {
     "Type": "Local",
     "Options": {
-      "Filename": "app.json"
+      "Filename": "app_local.json"
     }
   }
 }
