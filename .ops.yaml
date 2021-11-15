@@ -18,8 +18,9 @@ env:
     REGISTRY_USERNAME: "{{.registry.aliyun.username}}"
     REGISTRY_PASSWORD: "{{.registry.aliyun.password}}"
     REGISTRY_NAMESPACE: "{{.registry.aliyun.namespace}}"
-    MYSQL_ENDPOINT: "mysql"
     MYSQL_ROOT_PASSWORD: "{{.mysql.rootPassword}}"
+    MYSQL_HOST: "mysql"
+    MYSQL_PORT: 3306
     MYSQL_USERNAME: "{{.mysql.username}}"
     MYSQL_PASSWORD: "{{.mysql.password}}"
     MYSQL_DATABASE: "account"
@@ -33,7 +34,7 @@ env:
     ELASTICSEARCH_PASSWORD: "{{.elasticsearch.password}}"
     PULL_SECRET_NAME: "hatlonely-pull-secret"
     REPLICA_COUNT: 2
-    INGRESS_HOST: "k8s.account.hatlonely.com"
+    INGRESS_HOST: "k8s.rpc.account.hatlonely.com"
     SECRET_NAME: "k8s-secret"
 
 task:
@@ -52,15 +53,14 @@ task:
       cmd:
         type: string
         default: run
-        validation: x in ["image", "run"]
+        validation: x in ["image", "run", "delete"]
     step:
       - sh ${DEP}/ops/tool/render.sh ops/mysql ${TMP}/mysql
       - |
         case "${cmd}" in
           "image") sh ${DEP}/ops/tool/image.sh sync "docker.io" "bitnami" "" "" "${REGISTRY_ENDPOINT}" "${REGISTRY_NAMESPACE}" "${REGISTRY_USERNAME}" "${REGISTRY_PASSWORD}" "mysql" 8.0.25-debian-10-r37;;
-          "run") kubectl run mysql-client --rm --tty -i --restart='Never' --image ${REGISTRY_ENDPOINT}/${REGISTRY_NAMESPACE}/mysql:8.0.25-debian-10-r37 --namespace ${NAMESPACE} \
-              --overrides="{ \"spec\": { \"template\": { \"spec\": { \"imagePullSecrets\": [{\"name\": \"${PULL_SECRET_NAME}\"}] } } } }" \
-              --command -- mysql -uroot -h"${MYSQL_ENDPOINT}" -p"${MYSQL_ROOT_PASSWORD}" -e "$(cat "${TMP}/mysql/init.sql")";;
+          "run") kubectl apply -f ${TMP}/mysql/job.yaml;;
+          "delete") kubectl delete -f ${TMP}/mysql/job.yaml;;
         esac
   helm:
     args:

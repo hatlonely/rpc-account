@@ -72,8 +72,8 @@
           "username": "${MYSQL_USERNAME}",
           "password": "${MYSQL_PASSWORD}",
           "database": "${MYSQL_DATABASE}",
-          "host": "${MYSQL_ENDPOINT}",
-          "port": 3306,
+          "host": "${MYSQL_HOST}",
+          "port": ${MYSQL_PORT},
           "connMaxLifeTime": "60s",
           "maxIdleConns": 10,
           "maxOpenConns": 20
