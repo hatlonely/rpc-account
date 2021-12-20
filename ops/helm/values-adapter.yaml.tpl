@@ -42,6 +42,7 @@ config:
         "enableTrace": false,
         "enableMetric": true,
         "enablePprof": true,
+        "enablePing": true,
         "jaeger": {
           "serviceName": "rpc-account",
           "sampler": {
