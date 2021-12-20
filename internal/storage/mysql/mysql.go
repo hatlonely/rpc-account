@@ -21,17 +21,8 @@ func NewMySQLWithOptions(options *wrap.GORMDBWrapperOptions, opts ...refx.Option
 		return nil, errors.WithMessage(err, "wrap.NewGORMDBWrapperWithOptions failed")
 	}
 
-	if !db.HasTable(&storage.Account{}) {
-		if err := db.
-			Set(context.Background(), "gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4").
-			CreateTable(context.Background(), &storage.Account{}).
-			Unwrap().Error; err != nil {
-			return nil, errors.WithMessage(err, "db.CreateTable failed")
-		}
-	} else {
-		if err := db.AutoMigrate(context.Background(), &storage.Account{}).Unwrap().Error; err != nil {
-			return nil, errors.WithMessage(err, "db.AutoMigrate failed")
-		}
+	if err := db.AutoMigrate(context.Background(), &storage.Account{}); err != nil {
+		return nil, errors.WithMessage(err, "db.AutoMigrate failed")
 	}
 
 	return &MySQL{
