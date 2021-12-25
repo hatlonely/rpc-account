@@ -134,7 +134,7 @@
       "writers": [{
         "type": "RotateFile",
         "options": {
-          "filename": "log/${NAME}.rpc",
+          "filename": "log/${NAME}.log",
           "maxAge": "24h",
           "formatter": {
             "type": "Json"
